@@ -1,32 +1,41 @@
 ﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Png;
+using Microsoft.Toolkit.Uwp.Notifications;
 
-IImageFormat format;
+class DropImg {
 
-int argCount = 1;
-foreach (var arg in args) {
-    try {
-        Console.WriteLine($"processing file {argCount}: {arg}");
-        string inFile = Path.GetFullPath(arg);
-        string outFile = Path.GetFileNameWithoutExtension(inFile) + ".png";
+    public static int Main(string[] args) {
+        if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated()) { return 0; }
+        ToastNotificationManagerCompat.OnActivated += toastArgs => { return; };
 
-        if (inFile == outFile) {
-            Console.WriteLine($"file {inFile} is already a png, skipping");
-            continue;
+        var builder = new ToastContentBuilder();
+        int skipped = 0;
+
+        if (args.Length > 0) {
+            int argCount = args.Length;
+            builder.AddText($"Processing {argCount} images:");
+            foreach (var arg in args) {
+                try {
+                    // validate that this is a path and 
+                    string inFile = Path.GetFullPath(arg);
+                    string outFile = Path.GetFileNameWithoutExtension(inFile) + ".png";
+
+                    // if input and output file names are the same, skip this file (it's already a png)
+                    if (inFile == outFile) { skipped++; continue; }
+                    // Load image file and save it as a PNG
+                    Image.Load(inFile).SaveAsPng(outFile);
+                    // add to toast
+                    builder.AddText($"{Path.GetFileName(inFile)} converted to {Path.GetFileName(outFile)}");
+                } catch (Exception ex) {
+                    builder.AddText($"ERROR on {arg}: {ex}");
+                    break;
+                }
+            }
+        } else {
+            builder.AddText("No images to process. Try dropping an image file on me!");
         }
 
-        using Image image = Image.Load(inFile, out format);
-        image.Save(outFile, new PngEncoder());
-        Console.WriteLine($"successfully converted {Path.GetFileName(inFile)} to {Path.GetFileName(outFile)}");
-
-    } catch (Exception ex) {
-        Console.WriteLine($"hit exception on image {argCount}: {ex}");
-        continue;
-    } finally {
-        argCount++;
+        if (skipped > 0) { builder.AddText($"Skipped {skipped} images that were already PNGs"); }
+        builder.Show(toast => { toast.ExpirationTime = DateTime.Now.AddMinutes(5); });
+        return 0;
     }
 }
-
-Console.Write($"{Environment.NewLine}Press any key to exit...");
-Console.ReadKey(true);
