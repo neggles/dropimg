@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "dropimg": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Downloads\\3.jpg",
+      "hotReloadEnabled": false
+    }
+  }
+}

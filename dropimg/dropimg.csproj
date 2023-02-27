@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>assets\icon\imgdrop.ico</ApplicationIcon>
 		<PackageLicenseExpression>GPL-2.0-only</PackageLicenseExpression>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -15,7 +16,9 @@
 		<!-- Prevent warnings from unused code in dependencies -->
 		<TrimmerDefaultAction>link</TrimmerDefaultAction>
 		<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-		<StartupObject>DropImg</StartupObject>
+		<StartupObject>DropImg.Program</StartupObject>
+		<Title>DropImg</Title>
+		<Company>neggles.dev</Company>
 	</PropertyGroup>
 
 	<ItemGroup>
